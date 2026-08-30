@@ -2,7 +2,7 @@
 agp = "8.7.0"
 kotlin = "2.0.21"
 composeCompiler = "1.5.14"
-composeBom = "2024.10.00"
+composeBom = "2024.09.03"
 activityCompose = "1.9.3"
 hilt = "2.51.1"
 ksp = "2.0.21-1.0.25"
