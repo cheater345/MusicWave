@@ -101,6 +101,7 @@ data class SectionListRenderer(
 @Serializable
 data class SectionListContent(
     val musicCarouselShelfRenderer: MusicCarouselShelfRenderer? = null,
+    val musicCardShelfRenderer: MusicCardShelfRenderer? = null,
     val musicShelfRenderer: MusicShelfRenderer? = null,
     val musicPlaylistShelfRenderer: MusicPlaylistShelfRenderer? = null,
     val musicResponsiveHeaderRenderer: MusicResponsiveHeaderRenderer? = null,
@@ -175,6 +176,13 @@ data class MusicCarouselShelfContent(
 @Serializable
 data class MusicShelfRenderer(
     val title: TitleRuns? = null,
+    val contents: List<MusicShelfContent>? = null,
+    val continuations: List<Continuation>? = null
+)
+
+@Serializable
+data class MusicCardShelfRenderer(
+    val header: MusicCarouselShelfBasicHeaderRenderer? = null,
     val contents: List<MusicShelfContent>? = null,
     val continuations: List<Continuation>? = null
 )
@@ -771,15 +779,4 @@ data class EditPlaylistResponse(
 @Serializable
 data class ImageUploadResponse(
     val encryptedBlobId: String? = null
-)
-
-@Serializable
-data class NextResultResponse(
-    val title: String? = null,
-    val items: List<SongItem>? = null,
-    val currentIndex: Int? = null,
-    val lyricsEndpoint: BrowseEndpoint? = null,
-    val relatedEndpoint: BrowseEndpoint? = null,
-    val continuation: String? = null,
-    val endpoint: WatchEndpoint? = null
 )

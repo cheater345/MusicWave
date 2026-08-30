@@ -13,6 +13,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
@@ -352,7 +353,7 @@ class SearchRepositoryImpl(
     private fun parseSearchResults(response: SearchResponse): List<YTItem> {
         val items = mutableListOf<YTItem>()
         response.contents?.tabbedSearchResultsRenderer?.tabs?.forEach { tab ->
-            tab.tabRenderer?.content?.sectionListRenderer?.contents?.forEach { content ->
+            tab.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicShelfRenderer?.contents?.forEach { item ->
                     item.musicResponsiveListItemRenderer?.let { renderer ->
                         parseMusicResponsiveListItemRenderer(renderer)?.let { items.add(it) }
@@ -373,7 +374,7 @@ class SearchRepositoryImpl(
     private fun parseSearchSummary(response: SearchResponse): SearchSummaryPage {
         val summaries = mutableListOf<SearchSummary>()
         response.contents?.tabbedSearchResultsRenderer?.tabs?.forEach { tab ->
-            tab.tabRenderer?.content?.sectionListRenderer?.contents?.forEach { content ->
+            tab.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCardShelfRenderer?.let { shelf ->
                     val title = shelf.header?.musicCarouselShelfBasicHeaderRenderer?.title?.runs
                         ?.joinToString("") { it.text.orEmpty() } ?: "Other"
@@ -401,14 +402,14 @@ class SearchRepositoryImpl(
     private fun parseHomePage(response: BrowseResponse): HomePage {
         val sections = mutableListOf<HomeSection>()
         val chips = response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
-            ?.tabRenderer?.content?.sectionListRenderer?.header?.chipCloudRenderer?.chips?.mapNotNull { chip ->
+            ?.tabRenderer?.content?.header?.chipCloudRenderer?.chips?.mapNotNull { chip ->
                 HomeChip(
                     text = chip.text?.runs?.joinToString("") { it.text.orEmpty() } ?: "",
                     endpoint = chip.navigationEndpoint?.browseEndpoint
                 )
             }
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
-            ?.tabRenderer?.content?.sectionListRenderer?.contents?.forEach { content ->
+            ?.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCarouselShelfRenderer?.let { shelf ->
                     val title = shelf.header?.musicCarouselShelfBasicHeaderRenderer?.title?.runs
                         ?.joinToString("") { it.text.orEmpty() } ?: ""
@@ -421,7 +422,7 @@ class SearchRepositoryImpl(
                 }
             }
         val continuation = response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
-            ?.tabRenderer?.content?.sectionListRenderer?.continuations?.firstOrNull()
+            ?.tabRenderer?.content?.continuations?.firstOrNull()
             ?.nextContinuationData?.continuation
         return HomePage(chips = chips, sections = sections, continuation = continuation)
     }
@@ -456,7 +457,7 @@ class SearchRepositoryImpl(
         )
         val songs = mutableListOf<SongItem>()
         response.contents?.twoColumnBrowseResultsRenderer?.tabs?.forEach { tab ->
-            tab.tabRenderer?.content?.sectionListRenderer?.contents?.forEach { content ->
+            tab.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicShelfRenderer?.contents?.forEach { item ->
                     item.musicResponsiveListItemRenderer?.let { renderer ->
                         parseMusicResponsiveListItemRenderer(renderer)?.let { songs.add(it as SongItem) }
@@ -490,7 +491,7 @@ class SearchRepositoryImpl(
         val title = response.header?.musicHeaderRenderer?.title?.runs?.joinToString("") { it.text.orEmpty() } ?: ""
         val items = mutableListOf<YTItem>()
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.forEach { tab ->
-            tab.tabRenderer?.content?.sectionListRenderer?.contents?.forEach { content ->
+            tab.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicShelfRenderer?.contents?.forEach { item ->
                     item.musicResponsiveListItemRenderer?.let { renderer ->
                         parseMusicResponsiveListItemRenderer(renderer)?.let { items.add(it) }
@@ -570,7 +571,7 @@ class SearchRepositoryImpl(
         val newReleaseAlbums = mutableListOf<AlbumItem>()
         val moodAndGenres = mutableListOf<MoodAndGenres>()
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
-            ?.tabRenderer?.content?.sectionListRenderer?.contents?.forEach { content ->
+            ?.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCarouselShelfRenderer?.let { shelf ->
                     val title = shelf.header?.musicCarouselShelfBasicHeaderRenderer?.title?.runs
                         ?.joinToString("") { it.text.orEmpty() } ?: ""
@@ -589,7 +590,7 @@ class SearchRepositoryImpl(
     private fun parseMoodAndGenres(response: BrowseResponse): List<MoodAndGenres> {
         val items = mutableListOf<MoodAndGenres>()
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
-            ?.tabRenderer?.content?.sectionListRenderer?.contents?.forEach { content ->
+            ?.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCarouselShelfRenderer?.contents?.forEach { item ->
                     item.musicNavigationButtonRenderer?.let { renderer ->
                         MoodAndGenres(
@@ -645,7 +646,7 @@ class SearchRepositoryImpl(
     private fun parseChartsPage(response: BrowseResponse): ChartsPage {
         val sections = mutableListOf<ChartsSection>()
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
-            ?.tabRenderer?.content?.sectionListRenderer?.contents?.forEach { content ->
+            ?.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCarouselShelfRenderer?.let { shelf ->
                     val title = shelf.header?.musicCarouselShelfBasicHeaderRenderer?.title?.runs
                         ?.joinToString("") { it.text.orEmpty() } ?: ""
@@ -664,7 +665,7 @@ class SearchRepositoryImpl(
     private fun parseHistoryPage(response: BrowseResponse): HistoryPage {
         val sections = mutableListOf<HomeSection>()
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
-            ?.tabRenderer?.content?.sectionListRenderer?.contents?.forEach { content ->
+            ?.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCarouselShelfRenderer?.let { shelf ->
                     val title = shelf.header?.musicCarouselShelfBasicHeaderRenderer?.title?.runs
                         ?.joinToString("") { it.text.orEmpty() } ?: ""
@@ -802,7 +803,7 @@ class LibraryRepositoryImpl(
     private fun parseLibraryPage(response: BrowseResponse): LibraryPage {
         val items = mutableListOf<YTItem>()
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.forEach { tab ->
-            tab.tabRenderer?.content?.sectionListRenderer?.contents?.forEach { content ->
+            tab.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicShelfRenderer?.contents?.forEach { item ->
                     item.musicResponsiveListItemRenderer?.let { renderer ->
                         parseMusicResponsiveListItemRenderer(renderer)?.let { items.add(it) }
@@ -816,7 +817,7 @@ class LibraryRepositoryImpl(
             }
         }
         val continuation = response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
-            ?.tabRenderer?.content?.sectionListRenderer?.continuations?.firstOrNull()
+            ?.tabRenderer?.content?.continuations?.firstOrNull()
             ?.nextContinuationData?.continuation
         return LibraryPage(items = items, continuation = continuation)
     }
@@ -1010,9 +1011,11 @@ class PlaybackRepositoryImpl(
 
     private fun parseNextResponse(response: NextResponse, endpoint: WatchEndpoint): NextResult {
         val playlistPanelRenderer = response.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer
-            ?.watchNextTabbedResultsRenderer?.tabs?.getOrNull(0)?.tabRenderer?.content?.musicQueueRenderer?.content
+            ?.watchNextTabbedResultsRenderer?.tabs?.getOrNull(0)?.tabRenderer?.content
+            ?.contents?.firstOrNull()?.content?.musicQueueRenderer?.content
         val title = response.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer
-            ?.watchNextTabbedResultsRenderer?.tabs?.getOrNull(0)?.tabRenderer?.content?.musicQueueRenderer?.header
+            ?.watchNextTabbedResultsRenderer?.tabs?.getOrNull(0)?.tabRenderer?.content
+            ?.contents?.firstOrNull()?.content?.musicQueueRenderer?.header
             ?.musicQueueHeaderRenderer?.subtitle?.runs?.firstOrNull()?.text
         val songs = playlistPanelRenderer?.contents?.mapNotNull { content ->
             content.playlistPanelVideoRenderer?.let { renderer ->

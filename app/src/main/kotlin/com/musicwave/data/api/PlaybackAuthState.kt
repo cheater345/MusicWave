@@ -24,11 +24,11 @@ data class PlaybackAuthState(
         get() = "$cookie|$dataSyncId|$poToken|$poTokenPlayer|$poTokenGvs|$poTokenGvsSession|$poTokenGvsVideoId"
 
     fun normalized(): PlaybackAuthState = copy(
-        poToken = poToken?.trim().takeIf { it.isNotEmpty() },
-        poTokenPlayer = poTokenPlayer?.trim().takeIf { it.isNotEmpty() },
-        poTokenGvs = poTokenGvs?.trim().takeIf { it.isNotEmpty() },
-        poTokenGvsSession = poTokenGvsSession?.trim().takeIf { it.isNotEmpty() },
-        poTokenGvsVideoId = poTokenGvsVideoId?.trim().takeIf { it.isNotEmpty() }
+        poToken = poToken?.trim()?.takeIf { it.isNotEmpty() },
+        poTokenPlayer = poTokenPlayer?.trim()?.takeIf { it.isNotEmpty() },
+        poTokenGvs = poTokenGvs?.trim()?.takeIf { it.isNotEmpty() },
+        poTokenGvsSession = poTokenGvsSession?.trim()?.takeIf { it.isNotEmpty() },
+        poTokenGvsVideoId = poTokenGvsVideoId?.trim()?.takeIf { it.isNotEmpty() }
     )
 
     fun resolvePlayerPoToken(

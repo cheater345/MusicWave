@@ -35,6 +35,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class MusicPlaybackService : MediaSessionService(), AudioManager.OnAudioFocusChangeListener {
 
     private var mediaSession: MediaSession? = null
+    private var player: ExoPlayer? = null
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val queueManager = QueueManager()
     
@@ -58,7 +59,7 @@ class MusicPlaybackService : MediaSessionService(), AudioManager.OnAudioFocusCha
 
     private val positionUpdateJob = serviceScope.launch {
         while (isActive) {
-            mediaSession?.controller?.playbackState?.currentPosition?.let { position ->
+            mediaSession?.player?.currentPosition?.let { position ->
                 _currentPosition.value = position
             }
             delay(1000)
@@ -67,23 +68,23 @@ class MusicPlaybackService : MediaSessionService(), AudioManager.OnAudioFocusCha
 
     override fun onCreate() {
         super.onCreate()
-        
-        val sessionActivityPendingIntent = packageManager
-            .getLaunchIntentForPackage(packageName)
-            ?.let { sessionIntent ->
-                PendingIntent.getActivity(
-                    this,
-                    0,
-                    sessionIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-            }
 
-        mediaSession = MediaSession.Builder(this)
+        val exoPlayer = ExoPlayer.Builder(this).build()
+        player = exoPlayer
+
+        val sessionIntent = getLaunchIntentForPackage(packageName) ?: Intent(this, MainActivity::class.java)
+        val sessionActivityPendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            sessionIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        mediaSession = MediaSession.Builder(this, exoPlayer)
             .setSessionActivity(sessionActivityPendingIntent)
-            .setCallback(MediaSessionCallback())
+            .setCallback(object : MediaSession.SessionCallback {})
             .build()
-            
+
         setupAudioFocus()
     }
 
@@ -107,7 +108,6 @@ class MusicPlaybackService : MediaSessionService(), AudioManager.OnAudioFocusCha
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        MediaButtonReceiver.handleIntent(mediaSession?.controller?.sessionBinder?.asBinder()?.let { null }, intent)
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -143,13 +143,6 @@ class MusicPlaybackService : MediaSessionService(), AudioManager.OnAudioFocusCha
                 mediaSession?.player?.playWhenReady = true
                 mediaSession?.player?.volume = 1f
             }
-        }
-    }
-
-    inner class MediaSessionCallback : MediaSession.Callback {
-        override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
-            val mediaButtonIntent = MediaButtonReceiver.handleIntent(null, mediaButtonIntent)
-            return super.onMediaButtonEvent(mediaButtonIntent)
         }
     }
 
