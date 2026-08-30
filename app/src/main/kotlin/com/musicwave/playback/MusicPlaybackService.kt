@@ -72,7 +72,7 @@ class MusicPlaybackService : MediaSessionService(), AudioManager.OnAudioFocusCha
         val exoPlayer = ExoPlayer.Builder(this).build()
         player = exoPlayer
 
-        val sessionIntent = getLaunchIntentForPackage(packageName) ?: Intent(this, MainActivity::class.java)
+        val sessionIntent = packageManager.getLaunchIntentForPackage(packageName) ?: Intent(this, MainActivity::class.java)
         val sessionActivityPendingIntent = PendingIntent.getActivity(
             this,
             0,
@@ -82,7 +82,7 @@ class MusicPlaybackService : MediaSessionService(), AudioManager.OnAudioFocusCha
 
         mediaSession = MediaSession.Builder(this, exoPlayer)
             .setSessionActivity(sessionActivityPendingIntent)
-            .setCallback(object : MediaSession.SessionCallback {})
+            .setCallback(object : MediaSession.Callback {})
             .build()
 
         setupAudioFocus()
