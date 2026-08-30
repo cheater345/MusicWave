@@ -116,8 +116,8 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.animation)
-    debugImplementation("androidx.compose.ui:ui-tooling:1.7.5")
-    debugImplementation("androidx.compose.ui:ui-tooling-preview:1.7.5")
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.tooling.preview)
 
     // Hilt
     implementation(libs.hilt)

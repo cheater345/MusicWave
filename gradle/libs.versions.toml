@@ -2,7 +2,7 @@
 agp = "8.7.0"
 kotlin = "2.0.21"
 composeCompiler = "1.5.14"
-composeBom = "2024.09.03"
+composeBom = "2024.06.00"
 activityCompose = "1.9.3"
 hilt = "2.51.1"
 ksp = "2.0.21-1.0.25"
@@ -68,16 +68,16 @@ glance-material3 = { group = "androidx.glance", name = "glance-material3", versi
 
 # Compose
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "composeBom" }
-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeBom" }
-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeBom" }
-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util", version.ref = "composeBom" }
-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeBom" }
-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "composeBom" }
-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeBom" }
-compose-reorderable = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "composeBom" }
-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeBom" }
-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeBom" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+compose-animation = { group = "androidx.compose.animation", name = "animation" }
+compose-reorderable = { group = "androidx.compose.foundation", name = "foundation-layout" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 
 # Hilt
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
