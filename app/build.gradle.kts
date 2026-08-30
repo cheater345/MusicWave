@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.aboutlibraries.android)
 }
 
 android {
@@ -165,7 +164,6 @@ dependencies {
     implementation(libs.re2j)
     implementation(libs.apache.lang3)
     implementation(libs.timber)
-    implementation(libs.aboutlibraries)
     implementation(libs.markwon.core)
     implementation(libs.markwon.ext.strikethrough)
     implementation(libs.markwon.ext.tables)
