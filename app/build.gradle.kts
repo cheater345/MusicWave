@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -65,7 +63,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JvmTarget.JVM_21
+        jvmTarget = "21"
     }
 
     buildFeatures {
@@ -198,14 +196,13 @@ ksp {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configureEach {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_21)
+    kotlinOptions {
         freeCompilerArgs.addAll(
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3ExpressiveApi"
         )
-        suppressWarnings.set(true)
+        suppressWarnings = true
     }
 }
