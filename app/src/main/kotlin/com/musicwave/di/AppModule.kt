@@ -1,8 +1,7 @@
-package com.musicwave.di
+package com.musicwave.data.repository
 
 import android.content.Context
 import com.musicwave.data.api.*
-import com.musicwave.data.repository.*
 import com.musicwave.playback.*
 import dagger.Binds
 import dagger.Module
