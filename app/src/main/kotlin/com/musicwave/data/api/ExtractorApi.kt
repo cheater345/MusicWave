@@ -8,10 +8,12 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import java.net.*
+import java.util.Base64
 import java.util.concurrent.*
 
 interface ExtractorApi {
@@ -143,7 +145,7 @@ class ExtractorApiImpl(
 ) : ExtractorApi, AutoCloseable {
 
     private val normalizedBaseUrl = baseUrl.trimEnd('/')
-    private val json = Json { ignoreUnknownKeys = true; coerceInputValues = true }
+    private val clientJson = Json { ignoreUnknownKeys = true; coerceInputValues = true }
     
     private val httpClient = HttpClient(OkHttp) {
         engine {
@@ -155,15 +157,15 @@ class ExtractorApiImpl(
             }
         }
         install(ContentNegotiation) {
-            json(json)
+            json(clientJson)
         }
     }
 
     override suspend fun extractAudio(
         videoUrl: String,
-        poToken: String? = null,
-        gvsToken: String? = null,
-        cookies: String? = null
+        poToken: String?,
+        gvsToken: String?,
+        cookies: String?
     ): ExtractedAudio = withContext(Dispatchers.IO) {
         val normalizedVideoUrl = videoUrl.trim()
         requireHttpUrl(normalizedVideoUrl, "Video URL")
@@ -185,7 +187,7 @@ class ExtractorApiImpl(
         val raw = response.bodyAsText()
         validateHttpResponse(response, raw)
         
-        val backendResponse = json.decodeFromString<BackendExtractorResponse>(raw)
+        val backendResponse = clientJson.decodeFromString<BackendExtractorResponse>(raw)
         backendResponse.toExtractedAudio(normalizedBaseUrl)
     }
 
@@ -211,7 +213,7 @@ class ExtractorApiImpl(
         val raw = response.bodyAsText()
         validateHttpResponse(response, raw)
         
-        json.decodeFromString<StreamStatusResponse>(raw)
+        clientJson.decodeFromString<StreamStatusResponse>(raw)
     }
 
     override fun close() {
@@ -221,7 +223,7 @@ class ExtractorApiImpl(
     private suspend fun validateHttpResponse(response: HttpResponse, raw: String) {
         if (response.status.value in 200..299) return
 
-        val serverMessage = runCatching { json.decodeFromString<BackendErrorResponse>(raw).error }
+        val serverMessage = runCatching { clientJson.decodeFromString<BackendErrorResponse>(raw).error }
             .getOrNull()
             ?.trim()
             ?.takeIf { it.isNotEmpty() }
@@ -284,8 +286,8 @@ interface TokenRepository {
 }
 
 class InMemoryTokenRepository : TokenRepository {
+    @Volatile
     private var token: String? = null
-        @Volatile
     
     override fun getToken(): String? = token
     

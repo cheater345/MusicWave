@@ -244,8 +244,8 @@ data class ClientContext(
     val deviceModel: String = "Pixel 8",
     val screenWidthPoints: Int = 1080,
     val screenHeightPoints: Int = 2400,
-    val screenPixelDensity: Float = 2.75,
-    val screenDensityFloat: Float = 2.75,
+    val screenPixelDensity: Float = 2.75f,
+    val screenDensityFloat: Float = 2.75f,
     val utcOffsetMinutes: Int = 0,
     val timeZone: String = "UTC",
     val mainAppWebInfo: MainAppWebInfo? = null
@@ -483,12 +483,12 @@ class InnerTubeApiFactory {
 
             proxy?.let { okHttpBuilder.proxy(it) }
 
-            val httpClient = HttpClient(OkHttp) {
+            val httpClient = HttpClient(io.ktor.client.engine.okhttp.OkHttp) {
                 engine {
-                    config = okHttpBuilder.build()
+                    preconfigured = okHttpBuilder.build()
                 }
                 install(ContentNegotiation) {
-                    json(json)
+                    json(Json { ignoreUnknownKeys = true })
                 }
                 install(Logging) {
                     level = LogLevel.NONE

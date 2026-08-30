@@ -1,5 +1,7 @@
 package com.musicwave.data.model
 
+import kotlinx.serialization.Serializable
+
 interface YTItem {
     val id: String
     val title: String
@@ -8,8 +10,11 @@ interface YTItem {
     val thumbnailWidth: Int?
     val thumbnailHeight: Int?
     val explicit: Boolean
+        get() = false
     val duration: String?
+        get() = null
     val durationMs: Long?
+        get() = null
 }
 
 data class SongItem(
@@ -80,6 +85,7 @@ data class Artist(
     val id: String? = null
 )
 
+@Serializable
 data class WatchEndpoint(
     val videoId: String,
     val playlistId: String? = null,
@@ -88,6 +94,7 @@ data class WatchEndpoint(
     val params: String? = null
 )
 
+@Serializable
 data class BrowseEndpoint(
     val browseId: String,
     val params: String? = null

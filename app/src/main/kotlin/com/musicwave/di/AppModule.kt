@@ -59,7 +59,7 @@ object AppModule {
     fun provideHttpClient(
         authState: PlaybackAuthState
     ): HttpClient {
-        return HttpClient(OkHttp) {
+        return HttpClient(io.ktor.client.engine.okhttp.OkHttp) {
             engine {
                 config {
                     connectTimeout(15, TimeUnit.SECONDS)
@@ -376,7 +376,7 @@ class SearchRepositoryImpl(
         response.contents?.tabbedSearchResultsRenderer?.tabs?.forEach { tab ->
             tab.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCardShelfRenderer?.let { shelf ->
-                    val title = shelf.header?.musicCarouselShelfBasicHeaderRenderer?.title?.runs
+                    val title = shelf.header?.title?.runs
                         ?.joinToString("") { it.text.orEmpty() } ?: "Other"
                     val items = shelf.contents?.mapNotNull { item ->
                         item.musicResponsiveListItemRenderer?.let { parseMusicResponsiveListItemRenderer(it) }
@@ -411,7 +411,7 @@ class SearchRepositoryImpl(
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
             ?.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCarouselShelfRenderer?.let { shelf ->
-                    val title = shelf.header?.musicCarouselShelfBasicHeaderRenderer?.title?.runs
+                    val title = shelf.header?.title?.runs
                         ?.joinToString("") { it.text.orEmpty() } ?: ""
                     val items = shelf.contents?.mapNotNull { item ->
                         item.musicTwoRowItemRenderer?.let { parseMusicTwoRowItemRenderer(it) }
@@ -436,7 +436,7 @@ class SearchRepositoryImpl(
                 title = renderer.title?.runs?.joinToString("") { it.text.orEmpty() } ?: "",
                 artists = emptyList(),
                 year = null,
-                thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnails?.lastOrNull()?.url
+                thumbnail = renderer.thumbnail?.thumbnails?.lastOrNull()?.url
             )
         } ?: header?.musicDetailHeaderRenderer?.let { renderer ->
             AlbumItem(
@@ -445,7 +445,7 @@ class SearchRepositoryImpl(
                 title = renderer.title?.runs?.joinToString("") { it.text.orEmpty() } ?: "",
                 artists = emptyList(),
                 year = null,
-                thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnails?.lastOrNull()?.url
+                thumbnail = renderer.thumbnail?.thumbnails?.lastOrNull()?.url
             )
         } ?: AlbumItem(
             browseId = "",
@@ -475,7 +475,7 @@ class SearchRepositoryImpl(
                 browseId = "",
                 title = renderer.title?.runs?.joinToString("") { it.text.orEmpty() } ?: "",
                 artists = emptyList(),
-                thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnails?.lastOrNull()?.url
+                thumbnail = renderer.thumbnail?.thumbnails?.lastOrNull()?.url
             )
         } ?: ArtistItem(
             browseId = "",
@@ -518,7 +518,7 @@ class SearchRepositoryImpl(
 
     private fun parsePlaylistPage(response: BrowseResponse, playlistId: String): PlaylistPage {
         val header = response.header
-        val playlist = header?.musicResponsiveHeaderRenderer?.let { renderer ->
+        val playlist = header?.musicEditablePlaylistDetailHeaderRenderer?.header?.let { renderer ->
             PlaylistItem(
                 playlistId = playlistId,
                 title = renderer.title?.runs?.joinToString("") { it.text.orEmpty() } ?: "",
@@ -529,7 +529,7 @@ class SearchRepositoryImpl(
                     )
                 } ?: emptyList(),
                 songCountText = renderer.secondSubtitle?.runs?.firstOrNull()?.text,
-                thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnails?.lastOrNull()?.url,
+                thumbnail = renderer.thumbnail?.thumbnails?.lastOrNull()?.url,
                 description = null,
                 playEndpoint = null
             )
@@ -543,14 +543,14 @@ class SearchRepositoryImpl(
             playEndpoint = null
         )
         val songs = mutableListOf<SongItem>()
-        response.contents?.twoColumnBrowseResultsRenderer?.secondaryContents?.sectionListRenderer?.contents?.forEach { content ->
+        response.contents?.twoColumnBrowseResultsRenderer?.secondaryContents?.contents?.forEach { content ->
             content.musicShelfRenderer?.contents?.forEach { item ->
                 item.musicResponsiveListItemRenderer?.let { renderer ->
                     parseMusicResponsiveListItemRenderer(renderer)?.let { songs.add(it as SongItem) }
                 }
             }
         }
-        val songsContinuation = response.contents?.twoColumnBrowseResultsRenderer?.secondaryContents?.sectionListRenderer?.continuations?.firstOrNull()
+        val songsContinuation = response.contents?.twoColumnBrowseResultsRenderer?.secondaryContents?.continuations?.firstOrNull()
             ?.nextContinuationData?.continuation
         return PlaylistPage(playlist = playlist, songs = songs, songsContinuation = songsContinuation)
     }
@@ -573,7 +573,7 @@ class SearchRepositoryImpl(
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
             ?.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCarouselShelfRenderer?.let { shelf ->
-                    val title = shelf.header?.musicCarouselShelfBasicHeaderRenderer?.title?.runs
+                    val title = shelf.header?.title?.runs
                         ?.joinToString("") { it.text.orEmpty() } ?: ""
                     shelf.contents?.forEach { item ->
                         item.musicTwoRowItemRenderer?.let { renderer ->
@@ -596,7 +596,7 @@ class SearchRepositoryImpl(
                         MoodAndGenres(
                             title = renderer.title?.runs?.joinToString("") { it.text.orEmpty() } ?: "",
                             endpoint = renderer.navigationEndpoint?.browseEndpoint,
-                            thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnails?.lastOrNull()?.url
+                            thumbnail = renderer.thumbnail?.thumbnails?.lastOrNull()?.url
                         )
                     }?.let { items.add(it) }
                 }
@@ -606,7 +606,7 @@ class SearchRepositoryImpl(
 
     private fun parseBrowseResult(response: BrowseResponse): BrowseResult {
         val title = response.header?.musicHeaderRenderer?.title?.runs?.joinToString("") { it.text.orEmpty() }
-        val thumbnail = response.header?.musicHeaderRenderer?.thumbnail?.musicThumbnailRenderer?.thumbnails?.lastOrNull()?.url
+        val thumbnail = response.header?.musicHeaderRenderer?.thumbnail?.thumbnails?.lastOrNull()?.url
         val items = mutableListOf<BrowseResult.Item>()
         return BrowseResult(title = title, thumbnail = thumbnail, items = items)
     }
@@ -648,7 +648,7 @@ class SearchRepositoryImpl(
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
             ?.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCarouselShelfRenderer?.let { shelf ->
-                    val title = shelf.header?.musicCarouselShelfBasicHeaderRenderer?.title?.runs
+                    val title = shelf.header?.title?.runs
                         ?.joinToString("") { it.text.orEmpty() } ?: ""
                     val items = shelf.contents?.mapNotNull { item ->
                         item.musicResponsiveListItemRenderer?.let { parseMusicResponsiveListItemRenderer(it) }
@@ -667,7 +667,7 @@ class SearchRepositoryImpl(
         response.contents?.singleColumnBrowseResultsRenderer?.tabs?.firstOrNull()
             ?.tabRenderer?.content?.contents?.forEach { content ->
                 content.musicCarouselShelfRenderer?.let { shelf ->
-                    val title = shelf.header?.musicCarouselShelfBasicHeaderRenderer?.title?.runs
+                    val title = shelf.header?.title?.runs
                         ?.joinToString("") { it.text.orEmpty() } ?: ""
                     val items = shelf.contents?.mapNotNull { item ->
                         item.musicTwoRowItemRenderer?.let { parseMusicTwoRowItemRenderer(it) }
@@ -683,7 +683,7 @@ class SearchRepositoryImpl(
     private fun parseMusicResponsiveListItemRenderer(renderer: MusicResponsiveListItemRenderer): YTItem? {
         val title = renderer.title?.runs?.joinToString("") { it.text.orEmpty() } ?: return null
         val videoId = renderer.playlistItemData?.videoId ?: return null
-        val thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnails?.lastOrNull()?.url
+        val thumbnail = renderer.thumbnail?.thumbnails?.lastOrNull()?.url
         val explicit = renderer.badges?.any { badge ->
             badge.musicInlineBadgeRenderer?.icon?.iconType == "MUSIC_EXPLICIT_BADGE"
         } == true
@@ -839,7 +839,7 @@ class LibraryRepositoryImpl(
     private fun parseMusicResponsiveListItemRenderer(renderer: MusicResponsiveListItemRenderer): YTItem? {
         val title = renderer.title?.runs?.joinToString("") { it.text.orEmpty() } ?: return null
         val videoId = renderer.playlistItemData?.videoId ?: return null
-        val thumbnail = renderer.thumbnail?.musicThumbnailRenderer?.thumbnails?.lastOrNull()?.url
+        val thumbnail = renderer.thumbnail?.thumbnails?.lastOrNull()?.url
         val explicit = renderer.badges?.any { badge ->
             badge.musicInlineBadgeRenderer?.icon?.iconType == "MUSIC_EXPLICIT_BADGE"
         } == true
@@ -1012,11 +1012,11 @@ class PlaybackRepositoryImpl(
     private fun parseNextResponse(response: NextResponse, endpoint: WatchEndpoint): NextResult {
         val playlistPanelRenderer = response.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer
             ?.watchNextTabbedResultsRenderer?.tabs?.getOrNull(0)?.tabRenderer?.content
-            ?.contents?.firstOrNull()?.content?.musicQueueRenderer?.content
+            ?.contents?.firstOrNull()?.musicQueueRenderer?.content
         val title = response.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer
             ?.watchNextTabbedResultsRenderer?.tabs?.getOrNull(0)?.tabRenderer?.content
-            ?.contents?.firstOrNull()?.content?.musicQueueRenderer?.header
-            ?.musicQueueHeaderRenderer?.subtitle?.runs?.firstOrNull()?.text
+            ?.contents?.firstOrNull()?.musicQueueRenderer?.header
+            ?.subtitle?.runs?.firstOrNull()?.text
         val songs = playlistPanelRenderer?.contents?.mapNotNull { content ->
             content.playlistPanelVideoRenderer?.let { renderer ->
                 val songTitle = renderer.title?.runs?.joinToString("") { it.text.orEmpty() } ?: return@let null

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -245,6 +246,7 @@ fun MusicWaveAppContent() {
 }
 
 // Placeholder screens for Album, Artist, Playlist detail
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlbumScreen(
     albumId: String,
@@ -274,6 +276,7 @@ fun AlbumScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArtistScreen(
     artistId: String,
@@ -304,6 +307,7 @@ fun ArtistScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistScreen(
     playlistId: String,
