@@ -86,36 +86,27 @@ android {
 
 dependencies {
     // AndroidX
+    implementation(libs.androidx.core.ktx)
     implementation(libs.activity)
-    implementation(libs.appcompat)
-    implementation(libs.constraintlayout)
+    implementation(libs.media)
     implementation(libs.lifecycle.runtime)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.navigation)
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    ksp(libs.room.compiler)
-    implementation(libs.datastore)
-    implementation(libs.work.runtime)
-    implementation(libs.media3)
+
+    // Media3
+    implementation(libs.media3.common)
+    implementation(libs.media3.exoplayer)
     implementation(libs.media3.session)
-    implementation(libs.media3.okhttp)
-    implementation(libs.media3.ui)
-    implementation(libs.mediarouter)
-    implementation(libs.palette)
-    implementation(libs.glance)
-    implementation(libs.glance.appwidget)
-    implementation(libs.glance.material3)
 
     // Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
     implementation(libs.compose.ui)
-    implementation(libs.compose.ui.util)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.animation)
+    debugImplementation(platform(libs.compose.bom))
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.tooling.preview)
 
@@ -123,7 +114,6 @@ dependencies {
     implementation(libs.hilt)
     implementation(libs.hilt.navigation)
     ksp(libs.hilt.compiler)
-    ksp(libs.kotlin.metadata)
 
     // Kotlin
     implementation(libs.coroutines.core)
@@ -133,8 +123,9 @@ dependencies {
     // Ktor
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.logging)
     implementation(libs.ktor.serialization.json)
-    implementation(libs.ktor.client.websockets)
 
     // OkHttp
     implementation(libs.okhttp)
@@ -142,45 +133,10 @@ dependencies {
 
     // Image Loading
     implementation(libs.coil)
-    implementation(libs.coil.gif)
-    implementation(libs.coil.network.okhttp)
-
-    // UI Components
-    implementation(libs.accompanist.lyrics)
-    implementation(libs.shimmer)
-    implementation(libs.squigglyslider)
-    implementation(libs.re2j)
-    implementation(libs.apache.lang3)
-    implementation(libs.timber)
-    implementation(libs.markwon.core)
-    implementation(libs.markwon.ext.strikethrough)
-    implementation(libs.markwon.ext.tables)
-    implementation(libs.markwon.ext.tasklist)
-    implementation(libs.markwon.html)
-    implementation(libs.markwon.image)
-    implementation(libs.markwon.linkify)
-    implementation(libs.markwon.simple.ext)
-    implementation(libs.androidsvg)
-
-    // Translation
-    implementation(libs.translator)
-
-    // Japanese Tokenizer
-    implementation(libs.kuromoji.ipadic)
-
-    // Guava
-    implementation(libs.guava)
-    implementation(libs.coroutines.guava)
-    implementation(libs.concurrent.futures)
 
     // Testing
     testImplementation(libs.junit)
-    testImplementation(libs.turbine)
 
     // Desugaring
     coreLibraryDesugaring(libs.desugaring)
-}
-
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
 }
