@@ -145,7 +145,7 @@ data class TabRenderer(
 @Serializable
 data class TabContent(
     val content: SectionListRenderer? = null,
-    val endpoint: BrowseEndpoint? = null
+    val endpoint: NavigationEndpoint? = null
 )
 
 @Serializable
