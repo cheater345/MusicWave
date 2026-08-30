@@ -1,7 +1,7 @@
 package com.musicwave.data.repository
 
-import android.content.Context
 import com.musicwave.data.api.*
+import com.musicwave.data.model.*
 import com.musicwave.playback.*
 import dagger.Binds
 import dagger.Module
@@ -14,6 +14,7 @@ import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
 import okhttp3.*
 import java.net.Proxy
@@ -1000,14 +1001,14 @@ class PlaybackRepositoryImpl(
         val response = api.getTranscript(request)
         val responseBody = response.bodyAsText()
         val transcriptResponse = json.decodeFromString<GetTranscriptResponse>(responseBody)
-        transcriptResponse.actions?.firstOrNull()?.updateEngagementPanelAction?.content?.transcriptRenderer?.body?.transcriptBodyRenderer?.cueGroups?.joinToString("\n") { group ->
+        transcriptResponse.actions?.firstOrNull()?.updateEngagementPanelAction?.content?.transcriptRenderer?.body?.cueGroups?.joinToString("\n") { group ->
             val time = group.transcriptCueGroupRenderer?.cues?.firstOrNull()?.transcriptCueRenderer?.startOffsetMs ?: 0
             val text = group.transcriptCueGroupRenderer?.cues?.firstOrNull()?.transcriptCueRenderer?.cue?.simpleText?.trim('♪')?.trim(' ') ?: ""
             "[%02d:%02d.%03d]$text".format(time / 60000, (time / 1000) % 60, time % 1000)
         } ?: ""
     }
 
-    private fun parseNextResponse(response: NextResultResponse, endpoint: WatchEndpoint): NextResult {
+    private fun parseNextResponse(response: NextResponse, endpoint: WatchEndpoint): NextResult {
         val playlistPanelRenderer = response.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer
             ?.watchNextTabbedResultsRenderer?.tabs?.getOrNull(0)?.tabRenderer?.content?.musicQueueRenderer?.content
         val title = response.contents?.singleColumnMusicWatchNextResultsRenderer?.tabbedRenderer

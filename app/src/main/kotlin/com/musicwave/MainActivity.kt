@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -25,14 +27,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MusicWaveTheme {
-                MusicWaveApp()
+                MusicWaveAppContent()
             }
         }
     }
 }
 
 @Composable
-fun MusicWaveApp() {
+fun MusicWaveAppContent() {
     val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
@@ -330,13 +332,3 @@ fun PlaylistScreen(
         }
     }
 }
-
-private val Icons.Filled.Home get() = Icons.Default.Home
-private val Icons.Filled.Search get() = Icons.Default.Search
-private val Icons.Filled.LibraryMusic get() = Icons.Default.LibraryMusic
-private val Icons.Filled.ArrowBack get() = Icons.Default.ArrowBack
-private val Icons.Filled.MoreVert get() = Icons.Default.MoreVert
-private val Icons.Filled.QueueMusic get() = Icons.Default.QueueMusic
-private val Icons.Filled.Lyrics get() = Icons.Default.Lyrics
-private val Icons.Filled.Share get() = Icons.Default.Share
-private val Icons.Outlined.FavoriteBorder get() = Icons.Outlined.FavoriteBorder
